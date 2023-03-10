@@ -129,6 +129,7 @@ export type DialogProps<TTag extends ElementType> = Props<
   PropsForFeatures<typeof DialogRenderFeatures> & {
     open?: boolean
     onClose(value: boolean): void
+    escClosable?: boolean
     initialFocus?: MutableRefObject<HTMLElement | null>
     __demoMode?: boolean
   }
@@ -143,6 +144,7 @@ function DialogFn<TTag extends ElementType = typeof DEFAULT_DIALOG_TAG>(
     id = `headlessui-dialog-${internalId}`,
     open,
     onClose,
+    escClosable = true,
     initialFocus,
     __demoMode = false,
     ...theirProps
@@ -281,6 +283,7 @@ function DialogFn<TTag extends ElementType = typeof DEFAULT_DIALOG_TAG>(
 
   // Handle `Escape` to close
   let escapeToCloseEnabled = (() => {
+    if (!escClosable) return false
     if (hasNestedDialogs) return false
     if (dialogState !== DialogStates.Open) return false
     return true

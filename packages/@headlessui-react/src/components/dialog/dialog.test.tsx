@@ -863,6 +863,44 @@ describe('Keyboard interactions', () => {
         assertDialog({ state: DialogState.Visible })
       })
     )
+
+    it(
+      'should be not possible to close the dialog with Escape when escClosable is false',
+      suppressConsoleLogs(async () => {
+        function Example() {
+          let [isOpen, setIsOpen] = useState(false)
+          return (
+            <>
+              <button id="trigger" onClick={() => setIsOpen((v) => !v)}>
+                Trigger
+              </button>
+              <Dialog open={isOpen} onClose={setIsOpen} escClosable={false}>
+                Contents
+                <TabSentinel />
+              </Dialog>
+            </>
+          )
+        }
+        render(<Example />)
+
+        assertDialog({ state: DialogState.InvisibleUnmounted })
+
+        // Open dialog
+        await click(document.getElementById('trigger'))
+
+        // Verify it is open
+        assertDialog({
+          state: DialogState.Visible,
+          attributes: { id: 'headlessui-dialog-1' },
+        })
+
+        // Close dialog
+        await press(Keys.Escape)
+
+        // Verify it is close
+        assertDialog({ state: DialogState.Visible })
+      })
+    )
   })
 
   describe('`Tab` key', () => {
